@@ -6,9 +6,12 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />	
 					
 	<!-- JS/CSS File we want on every page -->
-	<link href="/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" type="text/css">
-	<!--<script src="/js/jquery-1.9.1.js"></script>-->
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>				
+	<link href="/css/custom-theme/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css">
+	<!--
+	<script src="/js/jquery-1.9.1.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	-->
+	<script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>				
 	<script type="text/javascript" src="/js/jquery-ui-1.10.3.custom.js"></script>
 	<script type="text/javascript" src="/js/mycustom.js"></script>	
 	<!-- Controller Specific JS/CSS -->

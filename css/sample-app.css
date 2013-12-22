@@ -129,7 +129,7 @@ clear:left;
 
 .error_msg {
 	font-weight: bold;
-	color: #CC0000;
+	color: #DD0000;
 }
 #user_header {
 height: 7em;
@@ -237,6 +237,12 @@ padding: 0px;
 .tag_list_title {
 	color: #FF0000;
 	font-weight: bold;
+}
+#tag_list option{
+	display: inline-block;
+}
+#tag_list option:not(:last-of-type):after { 
+content:",";
 }
 
 
