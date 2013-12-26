@@ -4,6 +4,21 @@ function toggleSelected ($option) {
 	
 }
 
+function replaceWhiteSpace( token ) {
+	tagname = (token != null)? token.trim() : "";
+	return tagname.replace(/\s+/g,"_"); 
+}
+
+function findClosestSelect(token){
+	var $firstMatch =  $("#tag_selector option[id^='key_" + replaceWhiteSpace(token) + "']")
+					  .first();
+	console.log( "First matching option = " + $firstMatch.text() + 
+	     " position: " + $firstMatch.position().top  + 
+		 " offset: " + $firstMatch.offset().top + 
+		 " scrollTop: " + $("#tag_selector").scrollTop());
+	return $firstMatch;
+	}
+
 $(document).ready(function(){
     var submit_flag = false;
 	
@@ -18,6 +33,7 @@ $(document).ready(function(){
 	$("#actual_submit").click(function(e) {
 
 		e.preventDefault();
+		console.log( "Target:" + e.target + " is " + e.target.nodeName );
 		var $postContent = $("textarea#new_post");
 		if ($postContent.val().length == 0)
 		{	
@@ -49,16 +65,19 @@ $(document).ready(function(){
 						// There should be at most one matching. Select it.
 						var $matching = $("#key_"+tagclass);
 						console.log("Match!="+$matching.parent().attr("id"));
-						if ($matching.length > 0 && ($matching.parent().attr("id") == 'tag_selector')) {
-							console.log("found match:"+$matching.val());
-							$matching.click();
+						if ($matching.length > 0) {
+							if ($matching.parent().attr("id") == 'tag_selector') {
+								console.log("found match:"+$matching.val());
+								$matching.click();
+							}
 						}
 						else {
 							$matching = $("<option>",{selected: "selected",
 															value : "NEW:"+tagname,
 															id: "key_"+tagclass}).text(tagname);
 							// Append to original select
-							$('#tag_list').append($matching);
+							$matching.appendTo($('#tag_selector')).click();
+							//$('#tag_list').append($matching);
 							//$matching.select();
 
 							// Refresh Selectric
@@ -71,11 +90,54 @@ $(document).ready(function(){
 					return false;
 				});	
 			
-	$('#add_val').change(function(e){
-		console.log("Change event");
-		e.preventDefault();
-		$('#bt_add_val').click();
-		return false;
+	$('#add_val').on({
+		change: function(e){
+			console.log("Change event");
+			e.preventDefault();
+			//$('#bt_add_val').click();
+			return false;
+		},
+		keypress: function(e) {
+			console.log("KEYPRESS event");
+			var keyCode = e.keyCode || e.which;
+			if (keyCode == 13) return false;
+		},
+		keydown: function(e) {
+			var keyCode = e.keyCode || e.which;
+			var content = $(this).val();
+			if (keyCode == 13) {
+				//$(this).parents('form').submit();
+				// Prevent from from submitting
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				alert( "Enter was hit");
+				return false;
+			}
+			
+		},
+		keyup: function(e) {
+			var keyCode = e.keyCode || e.which;
+			var content = $(this).val();
+			if (keyCode == 13) {
+				e.preventDefault();
+				//e.stopImmediatePropagation();
+				if ( content.length > 0 ) $('#bt_add_val').click();
+				return false;
+			}
+			else if (e.which >= 32 && (e.which <= 127))
+			{
+				if (content.length > 0){
+					var $firstMatch = findClosestSelect(content);
+					if ($firstMatch)
+					{	
+						var newPosition = $("#tag_selector").scrollTop()+$firstMatch.position().top - 1;
+						$("#tag_selector").scrollTop(newPosition);
+						
+					}
+				}
+			}
+		}
+		
 	});
 	
 	$('#tag_selector').on({
@@ -90,22 +152,86 @@ $(document).ready(function(){
 			// remove the old tag list
 			$newTagList.replaceAll('ul.tag_list');
 			},
+		focusin: function(e){
+			console.log("Focus event");
+		},
 		
 		click: function(e){
 			e.preventDefault();
 			console.log("click event for " + $(this).text());
-			var o = $(this).detach();
+			//var o = $(this).detach();
 			//toggleSelected($(this));
 			//$(this).select();
-			o.appendTo($("#tag_list"));
+			
+			$newtag = $('<li>',{class:"tag",
+						id: $(this).attr("id"),
+						value : $(this).attr("value")});
+			$newtag.text($(this).text());
+									
+			$(this).remove();								
+			$newtag.appendTo($("#tag_list"));
 		}
 	},	"option");
-	$('#tag_list').on( "click","option",function(e)
+	$('#tag_list').on( "click","li",function(e)
 				{
 					e.preventDefault();
-					$('#tag_selector').append($(this).detach());
-				})
-	
+					//$parent = $(this).parent();
+					$newoption = $('<option>',{	id: $(this).attr("id"),
+						value : $(this).attr("value")});
+					$newoption.text($(this).text());
+					$(this).remove();
+					$('#tag_selector').append($newoption);
+				});
+	/*** USING AUTOCOMPLETE FEATURE ***/
+
+    function log( message ) {
+      $( "<div>" ).text( message ).prependTo( "#log" );
+      $( "#log" ).scrollTop( 0 );
+    }
+ 
+    $( "#tag_finder" ).autocomplete( {
+		/*
+	   source: function( request, response ) {
+          var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+          response( $.grep( tags, function( item ){
+              return matcher.test( item );
+          }) );
+      }*/
+	 
+      source: function( request, response ) {
+        $.ajax({
+          url: "http://ws.geonames.org/searchJSON",
+          dataType: "jsonp",
+          data: {
+            featureClass: "P",
+            style: "full",
+            maxRows: 12,
+            name_startsWith: request.term
+          },
+          success: function( data ) {
+            response( $.map( data.geonames, function( item ) {
+              return {
+                label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
+                value: item.name
+              }
+            }));
+          }
+        });
+      },
+      minLength: 1,
+      select: function( event, ui ) {
+        console.log( ui.item ?
+          "Selected: " + ui.item.label :
+          "Nothing selected, input was " + this.value);
+      },
+      open: function() {
+        $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+      },
+      close: function() {
+        $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+      }
+    });
+
 	
 });
 	

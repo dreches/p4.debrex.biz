@@ -11,39 +11,45 @@
 			
 		</div>
 		<div id="post_entry">
-		<p>Post a memo, and if desired, tag it by one or more topics of your choosing.<br>
-		</p>
-		<textarea id="new_post" name='content' autofocus cols='70' rows='7'  ; ></textarea>
+			<p>Post a memo, and if desired, tag it by one or more topics of your choosing.<br>
+			</p>
+			<textarea id="new_post" name='content' autofocus cols='70' rows='7'  ; ></textarea>
+		</div>
 		<div id="tags_div">
+			<ul id="tag_list" class="tag_list">
 			<span class='tag_list_title'>Tags:</span>		
-			<select id="tag_list" class="tag_list" size=10>
+			
 					<!--
-					
+					<select id="tag_list" class="tag_list" size=10>
+					</select>
 					-->
-			</select>
-		<div>
-		<h3 class='error_msg'><?php if(isset($error)) echo "$error"; ?></h3>	
+			</ul>
+		</div>
+		<div class="error_div">
+			<h3 class='error_msg'><?php if(isset($error)) echo "$error"; ?></h3>	
 		</div>	
+		<div id="selector_div">	
+			<label for="tag_selector">Select or <span value="NEW:">create</span> tags for your table</label>
+			<br/>
+			<select class='enlarge_font' id='tag_selector' name='tags[]' multiple size="3" >
+				<? foreach($tags as $tag): ?>
+					<!--  class attribute to enforce uniqueness -->
+					<option value='<?=$tag['tag_id']?>' id='<?="key_".preg_replace('/\s+/','_',$tag['tag_name'])?>'><?=$tag['tag_name']?></option>
+				<? endforeach; ?>
+			</select>
+			<br/>
+			<input class="enlarge_font" id="add_val" type="text"></input>
+			
+			<button type="button" class="button" id="bt_add_val" title="Note: Newly created tags will be  selected automatically " >Add or select a tag</button>		
+						
+			<p>
+				<span value="NEW:">tagname</span> indicates a newly created tag. New tags attached to the post will be saved.
+			</p>
+		</div>			
 		
-				
-		
-		<label for="tag_selector">Select tags for your table</label>
-		<br/>
-		<br/>
-				
-		<select id='tag_selector' name='tags[]' multiple size="8" >
-			<? foreach($tags as $tag): ?>
-				<!--  class attribute to enforce uniqueness -->
-				<option value='<?=$tag['tag_id']?>' id='<?="key_".preg_replace('/\s+/','_',$tag['tag_name'])?>'><?=$tag['tag_name']?></option>
-			<? endforeach; ?>
-		</select>
-		<br/>
-		<input id="add_val" type="text"></input>
-		<button type="button" id="bt_add_val"
-		title="Note: Newly created tags will be selected automatically " >Add a new tag </button>		
 		<br/><br/>		
 		
-		<input class="button" id="actual_submit" type='Submit' value='Add new post'></input>
+		<button class="button" id="actual_submit" type='Submit' value='Add new post'>Add a new post</button>
 	</form>	
 	<script  type="text/javascript" src="../js/createTag.js">
 	</script>

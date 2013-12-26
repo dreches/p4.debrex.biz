@@ -114,6 +114,10 @@ border: 2px solid #bff323;
 margin-top: 10px;
 
 }
+.error_div {
+ min-height: 1em;
+ height: 1em;
+}
 
 #subtitle{
 /*
@@ -141,6 +145,17 @@ width: 80%;
 /*
 border-bottom: thick solid #bff323;
 */
+}
+*[value^="NEW:"] {
+	color: #99CC00;
+}
+#new_note {
+	color: #99CC00;
+	
+}
+
+*[value^="NEW:"]:after {
+	content: "*";
 }
 
 #plus_one{
@@ -226,6 +241,12 @@ font-style: italic;
 border : 2px solid navy;
 */
 }
+#tags_div ,#post_entry{
+	margin-top: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+}
 
 .tag_list {
 list-style:none;
@@ -245,6 +266,9 @@ padding: 0px;
 content:",";
 }
 
+#tag_selector {
+	position: relative;
+}
 
 .tag_list .tag{
 display: inline-block;
@@ -253,6 +277,10 @@ margin:0px;
 .tag:not(:last-of-type):after { 
 content:",";
 }
+
+.ui-autocomplete-loading {
+    background: white url('/images/ui-anim_basic_16x16.gif') right center no-repeat;
+  }
 
 .timestamp
 {
@@ -283,10 +311,56 @@ margin: 0em 3em .6em;
 	height: 2.5em;
 }
 
+#users_table {
+	width:  100%;
+	//border-radius: .5em;
+	//border: 2px solid #e63a0f;
+}
 
+#users_table thead {
+border-radius: .5em;
+}
 
+#users_table .user_img_column img {
+	/*
+	height: 1.2 em;
+	width: 1.2 em;
+	*/
+	height: 35px;
+	width: 35px;
+}
+
+#users_table tr {
+	max-height: 1.3 em;
+	height: 1.2 em;
+}
+
+#users_table .user_img_col
+{
+	max-width: 1.3;
+	width 1.3em;
+}
+#users_table .unfollow {
+border: 1px solid #ff5930;
+	background: #f15933 url(custom-theme/images/ui-bg_diagonals-small_40_f15933_40x40.png) 50% 50% repeat;
+	font-weight: bold;
+	color: #ffffff;
+}
+#users_table  a.unfollow:hover {
+border: 1px solid #999999;
+	background: #b4e130 url(custom-theme/images/ui-bg_diagonals-small_75_b4e130_40x40.png) 50% 50% repeat;
+	font-weight: bold;
+	color: #212121;
+}
+#users_table  a.unfollow:active {
+border: 1px solid #4372aa;
+	background: #4372aa url(custom-theme/images/ui-bg_diagonals-small_50_4372aa_40x40.png) 50% 50% repeat;
+	font-weight: bold;
+	color: #ffffff;
+}
+/*
 .follower_list{
-/*border: 1px solid orange;*/
+border: 1px solid orange;
 
 
 }
@@ -301,16 +375,27 @@ margin: 0em 3em .6em;
 {
 	float : left;
 }
-.follower_list .button
+*/
+
+
+#users_table .button
 {
+/*
 	clear:left;
+	width = 15em;
+*/	
 	text-align: center;
+	font-size: 80%;
+	/**/
+	//height = 1em;
+	width: 100%;
+	
 }
 
 .follow {
 
-padding-right : .52em;
-padding-left: .52em;
+//padding-right : .52em;
+//padding-left: .52em;
 
 }
 
@@ -321,10 +406,7 @@ padding-left :0em;
 }
 
 
-.follower_list .button
-{
-	font-size: 80%;
-	/*width = 15em;*/
-	height = 1em;
+.enlarge_font {
+	font-size: 100%;
 }
 

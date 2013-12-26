@@ -300,6 +300,16 @@ class posts_controller extends base_controller {
 		$this->template->content->users       = $users;
 		$this->template->content->connections = $connections;
 		
+		$client_files_head = Array ("/css/tablesorter/themes/blue/doctalk_style.css");
+		$this->template->client_files_head = Utils::load_client_files($client_files_head);
+		
+		$client_files_body = Array(
+			'/js/tablesorter/jquery.tablesorter.js',
+			'/js/posts_users.js'
+			);
+		
+		$this->template->client_files_body = Utils::load_client_files($client_files_body);
+		
 		# Render view
 		echo $this->template;
 		
@@ -325,7 +335,26 @@ class posts_controller extends base_controller {
 	    Router::redirect("/posts/users");
 	
 	}
+
+	public function follow_user($user_id_followed) {
 	
+	    # Prepare the data array to be inserted
+	    $data = Array(
+	        "created"          => Time::now(),
+	        "user_id"          => $this->user->user_id,
+	        "user_id_followed" => $user_id_followed
+	        );
+	
+	    # Do the insert
+	    $success = DB::instance(DB_NAME)->insert('users_users', $data);
+		
+		# This should be handled by an ajax call
+		return $success;
+		
+	    # Send them back
+	    #Router::redirect("/posts/users");
+	
+	}
 	
 	/*-------------------------------------------------------------------------------------------------
 	Removes the specified row in the users_users table, removing the follow between two users
@@ -341,6 +370,23 @@ class posts_controller extends base_controller {
 	
 	    # Send them back
 	    Router::redirect("/posts/users");
+	
+	}
+	
+	
+	public function unfollow_user($user_id_followed) {
+	
+	    # Set up the where condition
+	    $where_condition = "WHERE user_id = '".$this->user->user_id.
+		"' AND user_id_followed = '".$user_id_followed."'";
+	    
+	    # Run the delete
+	    $success = DB::instance(DB_NAME)->delete('users_users', $where_condition);
+	
+		return $success;
+		
+	    # Send them back
+	    #Router::redirect("/posts/users");
 	
 	}
 	
