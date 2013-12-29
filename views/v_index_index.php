@@ -11,7 +11,7 @@
 	<br><br>
 	
 	<div id='plus_one'>
-		<h3>Plus Ones</h3>
+		<h3>Functionality</h3>
 		<ul id='outer_list'>
 			<li>Edit your profile (name/uploading an avatar)</li>
 			<li>3 ways of viewing posts.
@@ -23,6 +23,8 @@
 				</ol>
 			</li>
 		</ul>
+		<p>P4 improvements:User table is now sortable. Adding new tags is now even easier with a custom autocomplete feature and a clearer way of seeing 
+		tags selected for a post. New user is automatically signed up to view own posts</p> 
 	</div>
 <?php endif; ?>
 </p>
