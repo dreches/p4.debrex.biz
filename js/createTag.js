@@ -37,7 +37,7 @@ $(document).ready(function(){
 			else {
 				$(".error_msg").text("Post submitted ...");
 				// Deselect any items not associated with the post
-				$("#tag_selector option[selected]").attr("selected","");
+				$("#tag_selector option[selected]").removeAttr("selected");
 				// Make sure all tags added to the post are selected
 				$("#selected_tags option").attr("selected","selected");
 				return true;
@@ -151,7 +151,7 @@ $(document).ready(function(){
 							$(this).val( $firstMatch.text() );
 					}
 					else {  // Nothing was found so dehighlight any existing selected elements in the selector list
-						$("#tag_selector option[selected]").attr("selected","");
+						$("#tag_selector option[selected]").removeAttr("selected");
 					}
 					
 				}

@@ -54,13 +54,13 @@ class posts_controller extends base_controller {
 	Process new posts
 	-------------------------------------------------------------------------------------------------*/
 	public function p_add() {
-		
+		/*
 		echo "<pre><br>";
 		echo print_r($_POST);
 		echo "<br>TAG DATA<br>";
 		echo print_r($_POST['selected_tags']);
 		echo "</pre>";
-		
+		*/
 		if(empty($_POST['content'])){
 			$this->add("Post content was empty. Nothing was posted <br/><br/>");
 		}
@@ -336,7 +336,7 @@ class posts_controller extends base_controller {
 	    Router::redirect("/posts/users");
 	
 	}
-
+	/* Returns a string for AJAX */
 	public function follow_user($user_id_followed) {
 	
 	    # Prepare the data array to be inserted
@@ -376,7 +376,7 @@ class posts_controller extends base_controller {
 	
 	}
 	
-	
+	/* Returns a string for AJAX */
 	public function unfollow_user($user_id_followed) {
 	
 	    # Set up the where condition

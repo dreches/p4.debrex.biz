@@ -23,8 +23,7 @@
 			<ul id="tag_list" class="tag_list">
 			<span class='tag_list_title'>Tags:</span>		
 					<!--
-					<select id="tag_list" class="tag_list" size=10>
-					</select>
+					Tags will be added as they are selected from tag_selector
 					-->
 			</ul>
 			<p>
@@ -41,14 +40,15 @@
 			<br/>
 			<select class='enlarge_font' id='tag_selector' name='tags[]'  size="6" >
 				<? foreach($tags as $tag): ?>
-					<!--  dreate id attribute to enforce uniqueness for searches-->
+					<!--  create id attribute to enforce uniqueness for searches-->
 					<? $tagname = strtolower($tag['tag_name']); ?>
 					<option value='<?=$tag['tag_id']?>' id='<?="key_".preg_replace('/\s+/','_',$tagname	)?>'><?=$tag['tag_name']?></option>
 				<? endforeach; ?>
 			</select>	
 			<input class="enlarge_font" id="add_val" type="text" size="35" placeholder = ""></input>			
 			<button type="button" class="button" id="bt_add_val" title="Note: Newly created tags will be added when the post is filed" >Add or select a tag</button>		
-			<p class="reduced_font">Search for an existing tag. Hitting the &uarr; will select the highlighted tag</p> 			
+			<p class="reduced_font">Search for an existing tag. Hitting &uarr; will select the highlighted tag. Clicking an option will also add it.<br/>
+			Clicking on a tag attached to the post will remove it.</p> 			
 			
 		</div>			
 		
