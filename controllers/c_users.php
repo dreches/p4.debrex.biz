@@ -93,6 +93,19 @@ class users_controller extends base_controller {
 			}
 			
 			else {
+				
+				# P4 update Automatically follow yourself	
+				$data = Array(
+					"created"          => Time::now(),
+					"user_id"          => $user_id,
+					"user_id_followed" => $user_id
+				);
+		
+				# Do the insert
+				DB::instance(DB_NAME)->insert('users_users', $data);
+		
+				
+				
 				#OLD Send them to the login page
 				#OLD Router::redirect('/users/login');
 				
@@ -113,7 +126,7 @@ class users_controller extends base_controller {
 				if($token) {
 					$this->do_login_update($token);
 				}
-				# Fail. log in failes, for some reason, send them to the login
+				# Fail. log in fails, for some reason, send them to the login
 				# page, not signup. 
 				else {
 					$error = true;
@@ -181,6 +194,8 @@ class users_controller extends base_controller {
 		
 		# Success
 		if($token) {
+			
+			# Prepare the data array to be inserted
 			$this->do_login_update($token);
 			Router::redirect('/users/profile');
 		}

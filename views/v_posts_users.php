@@ -27,12 +27,22 @@
 			<td>
 				this is a really long let's see what happens email address
 			</td>
-			<td class = "ui-widget-header">
+			<td class = "follower_cell" id="user_<?=$user['user_id']?>">
 				<?php if(isset($connections[$user['user_id']])): ?>
-					<a class="button unfollow" href='/posts/unfollow/<?=$user['user_id']?>'>Unfollow</a>
+					
+					<a class="button unfollow" href='/posts/unfollow_user/<?=$user['user_id']?>'>Unfollow</a>
+				<!--	
+					<input class="button unfollow" type="submit" value="Unfollow"/>
+				-->
 				<?php else: ?>
-					<a class="button follow" href='/posts/follow/<?=$user['user_id']?>'>Follow</a>
+					
+					<a class="button follow" href='/posts/follow_user/<?=$user['user_id']?>'>Follow</a>
+					<!--
+					<input class="button follow" type="submit" value="Follow" />
+					<input type="hidden" name="user_id" value="<?=$user['user_id']?>"/>
+					-->
 				<?php endif; ?>	
+				
 			</td>
 			
 		</tr>	

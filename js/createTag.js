@@ -4,40 +4,53 @@ function toggleSelected ($option) {
 	
 }
 
+
 function replaceWhiteSpace( token ) {
-	tagname = (token != null)? token.trim() : "";
-	return tagname.replace(/\s+/g,"_"); 
+	if (!token) return "";
+	tagLabel = token.trim();
+	return tagLabel.replace(/\s+/g,"_"); 
+}
+
+function createKey(token) {
+	tag = replaceWhiteSpace( token.toLowerCase() );
+	
+	return "key_" +tag; 
 }
 
 function findClosestSelect(token){
-	var $firstMatch =  $("#tag_selector option[id^='key_" + replaceWhiteSpace(token) + "']")
-					  .first();
-	console.log( "First matching option = " + $firstMatch.text() + 
-	     " position: " + $firstMatch.position().top  + 
-		 " offset: " + $firstMatch.offset().top + 
-		 " scrollTop: " + $("#tag_selector").scrollTop());
+	var $firstMatch =  $("#tag_selector option[id^='" + createKey(token) + "']")
+		.first();
 	return $firstMatch;
 	}
+function clearSelection() {
+	$firstMatch = null;
+	$('#add_val').val("");	
+}
 
 $(document).ready(function(){
     var submit_flag = false;
+	var $firstMatch = null;
 	
 	$( "form" ).submit(function( event ) {		   
-			console.log("Submit:" + submit_flag);
+			//console.log("Submit:" + submit_flag);
 			if (!submit_flag) { event.preventDefault(); return false;}
 			else {
 				$(".error_msg").text("Post submitted ...");
+				// Deselect any items not associated with the post
+				$("#tag_selector option[selected]").attr("selected","");
+				// Make sure all tags added to the post are selected
+				$("#selected_tags option").attr("selected","selected");
 				return true;
 			}
 		});
 	$("#actual_submit").click(function(e) {
 
 		e.preventDefault();
-		console.log( "Target:" + e.target + " is " + e.target.nodeName );
+		//console.log( "Target:" + e.target + " is " + e.target.nodeName );
 		var $postContent = $("textarea#new_post");
 		if ($postContent.val().length == 0)
 		{	
-			alert("Empty content");
+			//alert("Empty content");
 			submit_flag = false;
 			$(".error_msg").
 						text("Please enter some text.")
@@ -54,16 +67,17 @@ $(document).ready(function(){
 					e.preventDefault();
 
 					// Store the value in a variable
-					var tagname = $('#add_val').val();
+					var tagLabel = $('#add_val').val();
+					tagLabel = (tagLabel != null)? tagLabel.trim() : "";
 					var newtag;
 					console.log("Click event");
-					tagname = (tagname != null)? tagname.trim() : "";
-					var tagclass = tagname.replace(/\s+/g,"_");
+					
+					var tagID = createKey(tagLabel);
 					// Make sure value isn't null and is not a duplicate of one we have
-					if (tagname.length > 0)
+					if (tagLabel.length > 0)
 					{	
 						// There should be at most one matching. Select it.
-						var $matching = $("#key_"+tagclass);
+						var $matching = $("#"+tagID);
 						console.log("Match!="+$matching.parent().attr("id"));
 						if ($matching.length > 0) {
 							if ($matching.parent().attr("id") == 'tag_selector') {
@@ -73,8 +87,8 @@ $(document).ready(function(){
 						}
 						else {
 							$matching = $("<option>",{selected: "selected",
-															value : "NEW:"+tagname,
-															id: "key_"+tagclass}).text(tagname);
+															value : "NEW:"+tagLabel,
+															id: tagID}).text(tagLabel);
 							// Append to original select
 							$matching.appendTo($('#tag_selector')).click();
 							//$('#tag_list').append($matching);
@@ -83,8 +97,8 @@ $(document).ready(function(){
 							// Refresh Selectric
 							//$('#dynamic').selectric('refresh');
 						}
-						$('#add_val').val("");
-						
+						//$('#add_val').val("");
+						clearSelection();
 					}
 					
 					return false;
@@ -109,8 +123,8 @@ $(document).ready(function(){
 				//$(this).parents('form').submit();
 				// Prevent from from submitting
 				e.preventDefault();
-				e.stopImmediatePropagation();
-				alert( "Enter was hit");
+				//e.stopImmediatePropagation();
+				//alert( "Enter was hit");
 				return false;
 			}
 			
@@ -127,34 +141,29 @@ $(document).ready(function(){
 			else if (e.which >= 32 && (e.which <= 127))
 			{
 				if (content.length > 0){
-					var $firstMatch = findClosestSelect(content);
-					if ($firstMatch)
-					{	
+					$firstMatch = findClosestSelect(content);
+					if ($firstMatch.length > 0)
+					{						
+						$firstMatch.attr("selected","selected");
 						var newPosition = $("#tag_selector").scrollTop()+$firstMatch.position().top - 1;
-						$("#tag_selector").scrollTop(newPosition);
-						
+						//$("#tag_selector").scrollTop(newPosition);
+						if (e.which == 38) // the up arrow key was hit
+							$(this).val( $firstMatch.text() );
 					}
+					else {  // Nothing was found so dehighlight any existing selected elements in the selector list
+						$("#tag_selector option[selected]").attr("selected","");
+					}
+					
 				}
+				
 			}
+		
 		}
 		
 	});
 	
 	$('#tag_selector').on({
-		select:function(){
-			console.log("select event for option " + $(this).text());
-			var $newTagList = $('<ul>',{id: "tag_list"});
-			$('#tag_selector option[selected]').each( function(){
-									$newtag = $('<li>',{class:"tag"});
-									$newtag.html("<a href='#'>"+$(this).text()+"</a>");
-									$newTagList.append($newtag);
-											});
-			// remove the old tag list
-			$newTagList.replaceAll('ul.tag_list');
-			},
-		focusin: function(e){
-			console.log("Focus event");
-		},
+		
 		
 		click: function(e){
 			e.preventDefault();
@@ -164,76 +173,41 @@ $(document).ready(function(){
 			//$(this).select();
 			
 			$newtag = $('<li>',{class:"tag",
-						id: $(this).attr("id"),
-						value : $(this).attr("value")});
+						// Added the D to make sure no conflict with hidden select option
+						id: "D_" + $(this).attr("id"),
+						value : $(this).attr("value")
+						}).css({"cursor": "pointer"});
 			$newtag.text($(this).text());
 									
-			$(this).remove();								
+			//$(this).remove();	
+			// In addition to adding it to the list, add it to our hidden select
+			$(this).detach().appendTo( $("#selected_tags")).attr("selected","selected");	
 			$newtag.appendTo($("#tag_list"));
 		}
 	},	"option");
 	$('#tag_list').on( "click","li",function(e)
 				{
 					e.preventDefault();
-					//$parent = $(this).parent();
+					
+					/*
 					$newoption = $('<option>',{	id: $(this).attr("id"),
 						value : $(this).attr("value")});
 					$newoption.text($(this).text());
+					*/
+					// Remove the D_ to get the option
+					optionID = "#" + $(this).attr("id").substr(2);
+					$option = $(optionID);
 					$(this).remove();
-					$('#tag_selector').append($newoption);
+					$option.detach().appendTo($("#tag_selector")).removeAttr("selected");
+					//$('#tag_selector').append($newoption);
 				});
-	/*** USING AUTOCOMPLETE FEATURE ***/
-
-    function log( message ) {
-      $( "<div>" ).text( message ).prependTo( "#log" );
-      $( "#log" ).scrollTop( 0 );
-    }
- 
-    $( "#tag_finder" ).autocomplete( {
-		/*
-	   source: function( request, response ) {
-          var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
-          response( $.grep( tags, function( item ){
-              return matcher.test( item );
-          }) );
-      }*/
-	 
-      source: function( request, response ) {
-        $.ajax({
-          url: "http://ws.geonames.org/searchJSON",
-          dataType: "jsonp",
-          data: {
-            featureClass: "P",
-            style: "full",
-            maxRows: 12,
-            name_startsWith: request.term
-          },
-          success: function( data ) {
-            response( $.map( data.geonames, function( item ) {
-              return {
-                label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
-                value: item.name
-              }
-            }));
-          }
-        });
-      },
-      minLength: 1,
-      select: function( event, ui ) {
-        console.log( ui.item ?
-          "Selected: " + ui.item.label :
-          "Nothing selected, input was " + this.value);
-      },
-      open: function() {
-        $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-      },
-      close: function() {
-        $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-      }
-    });
 
 	
 });
-	
+/////////////////////////////////////////////////////////////////////////////////////
+
+ 
+
+ 
 	
 	

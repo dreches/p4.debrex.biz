@@ -54,13 +54,13 @@ class posts_controller extends base_controller {
 	Process new posts
 	-------------------------------------------------------------------------------------------------*/
 	public function p_add() {
-		/**
+		
 		echo "<pre><br>";
 		echo print_r($_POST);
 		echo "<br>TAG DATA<br>";
-		echo print_r($_POST['tags']);
+		echo print_r($_POST['selected_tags']);
 		echo "</pre>";
-		**/
+		
 		if(empty($_POST['content'])){
 			$this->add("Post content was empty. Nothing was posted <br/><br/>");
 		}
@@ -74,13 +74,14 @@ class posts_controller extends base_controller {
 			#copy the tag ids for later processing
 			#Initialize to prevent from crashing
 			$tag_ids = Array();
-			if(isset($_POST['tags']))
-				$tag_ids = $_POST['tags'];
+			if(isset($_POST['selected_tags']))
+				$tag_ids = $_POST['selected_tags'];
 
 	
 			
 			unset($_POST['highlight']);
 			unset($_POST['tags']);
+			unset($_POST['selected_tags']);
 		
 			$post_id = DB::instance(DB_NAME)->insert('posts',$_POST);
 			
@@ -348,8 +349,10 @@ class posts_controller extends base_controller {
 	    # Do the insert
 	    $success = DB::instance(DB_NAME)->insert('users_users', $data);
 		
-		# This should be handled by an ajax call
-		return $success;
+		# Return a string to the ajax call
+		echo "/posts/unfollow_user/".$user_id_followed;
+		
+		
 		
 	    # Send them back
 	    #Router::redirect("/posts/users");
@@ -382,8 +385,10 @@ class posts_controller extends base_controller {
 	    
 	    # Run the delete
 	    $success = DB::instance(DB_NAME)->delete('users_users', $where_condition);
-	
-		return $success;
+		
+		# Return a string to the ajax call
+		
+			echo "/posts/follow_user/".$user_id_followed;
 		
 	    # Send them back
 	    #Router::redirect("/posts/users");

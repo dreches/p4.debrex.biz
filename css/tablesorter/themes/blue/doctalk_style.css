@@ -27,18 +27,20 @@ table.tablesorter thead tr .header {
 table.tablesorter tbody td {
 	color: #3D3D3D;
 	//padding: 4px;
-	padding-bottom : 0px;
+	padding-bottom : none;
 	margin-bottom : 0px;
-	padding-right: .3em;
+	padding-left: 0px;
 	background-color: #FFF;
 	vertical-align: top;
 	height : 1.2 em;
 	max-height 1.3em;
+	border-bottom: 4px solid #CDCDCD;
 }
 table.tablesorter tbody tr.odd td {
 	//background-color:#F0F0F6;
 	background-color: #F4F7FA;
 	color: #e63a0f;
+	
 }
 table.tablesorter thead tr .headerSortUp {
 	background-image: url(asc2.gif);
