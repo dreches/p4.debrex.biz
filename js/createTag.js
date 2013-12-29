@@ -1,4 +1,5 @@
 function toggleSelected ($option) {
+	// THIS FUNCTION NOT IN USE
 	if (($option['selected'])) { alert("option deselected");$option.removeAttr('selected');}
 	else $option.attr('selected','selected');
 	
@@ -54,7 +55,7 @@ $(document).ready(function(){
 			submit_flag = false;
 			$(".error_msg").
 						text("Please enter some text.")
-						.show().fadeOut(3000,function(){ new_post.focus();});
+						.show().fadeOut(3500,function(){ new_post.focus();});
 			//$(".error_msg").text().show().fadeOut(3000);
 		}
 		else  {
@@ -68,6 +69,7 @@ $(document).ready(function(){
 
 					// Store the value in a variable
 					var tagLabel = $('#add_val').val();
+					// Trim leading and trailing spaces from the tag 
 					tagLabel = (tagLabel != null)? tagLabel.trim() : "";
 					var newtag;
 					console.log("Click event");
@@ -76,12 +78,12 @@ $(document).ready(function(){
 					// Make sure value isn't null and is not a duplicate of one we have
 					if (tagLabel.length > 0)
 					{	
-						// There should be at most one matching. Select it.
+						// There should be at most one matching. Select it if it hasn't already been chosen. Otherwise ignore
 						var $matching = $("#"+tagID);
-						console.log("Match!="+$matching.parent().attr("id"));
+						console.log("Match="+$matching.parent().attr("id"));
 						if ($matching.length > 0) {
 							if ($matching.parent().attr("id") == 'tag_selector') {
-								console.log("found match:"+$matching.val());
+								console.log("Adding tag:"+$matching.val());
 								$matching.click();
 							}
 						}
@@ -94,8 +96,7 @@ $(document).ready(function(){
 							//$('#tag_list').append($matching);
 							//$matching.select();
 
-							// Refresh Selectric
-							//$('#dynamic').selectric('refresh');
+							
 						}
 						//$('#add_val').val("");
 						clearSelection();
@@ -114,13 +115,14 @@ $(document).ready(function(){
 		keypress: function(e) {
 			console.log("KEYPRESS event");
 			var keyCode = e.keyCode || e.which;
+			// Checking keypress was needed for IE browser
 			if (keyCode == 13) return false;
 		},
 		keydown: function(e) {
 			var keyCode = e.keyCode || e.which;
 			var content = $(this).val();
 			if (keyCode == 13) {
-				//$(this).parents('form').submit();
+				
 				// Prevent from from submitting
 				e.preventDefault();
 				//e.stopImmediatePropagation();
@@ -140,13 +142,17 @@ $(document).ready(function(){
 			}
 			else if (e.which >= 32 && (e.which <= 127))
 			{
+				// This is my implementation of the autocomplete feature. The search is case insensitive. 
 				if (content.length > 0){
 					$firstMatch = findClosestSelect(content);
 					if ($firstMatch.length > 0)
-					{						
+					{	
+						// Initially, what I tried to do was scroll to the matching option. But scrolling and getting the position did not work
+						// in Chrome. So I ended up  just selecting the element
 						$firstMatch.attr("selected","selected");
-						var newPosition = $("#tag_selector").scrollTop()+$firstMatch.position().top - 1;
+						//var newPosition = $("#tag_selector").scrollTop()+$firstMatch.position().top - 1;
 						//$("#tag_selector").scrollTop(newPosition);
+						// Added key up functionality to mimic autocomplete functionality
 						if (e.which == 38) // the up arrow key was hit
 							$(this).val( $firstMatch.text() );
 					}

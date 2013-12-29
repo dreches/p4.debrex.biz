@@ -281,6 +281,7 @@ class posts_controller extends base_controller {
 		# We don't need all the information about the users at this point
 		$q = 'SELECT user_id,
 		 first_name,last_name,
+		 email,
 		 concat(first_name," ",last_name) as user_name,
 		 concat("'.AVATAR_PATH.'",avatar) as avatar_url
 		FROM users

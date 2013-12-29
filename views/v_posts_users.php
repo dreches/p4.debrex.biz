@@ -25,7 +25,7 @@
 				<?=$user['last_name']?>
 			</td>
 			<td>
-				this is a really long let's see what happens email address
+				<?=$user['email']?>				
 			</td>
 			<td class = "follower_cell" id="user_<?=$user['user_id']?>">
 				<?php if(isset($connections[$user['user_id']])): ?>
